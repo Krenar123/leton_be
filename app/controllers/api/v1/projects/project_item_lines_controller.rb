@@ -94,7 +94,7 @@ module Api
             :unit_price,
             :vendor,
             :parent_id,
-            :depends_on_id,
+            :depends_on,
             :level
           )
         end        

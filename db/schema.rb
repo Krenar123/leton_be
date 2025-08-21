@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_17_181639) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_21_211133) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -228,6 +228,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_17_181639) do
     t.index ["ref"], name: "index_objectives_on_ref", unique: true
   end
 
+  create_table "organizations", force: :cascade do |t|
+    t.string "ref", null: false
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_organizations_on_name", unique: true
+    t.index ["ref"], name: "index_organizations_on_ref", unique: true
+  end
+
   create_table "payments", force: :cascade do |t|
     t.string "ref", null: false
     t.bigint "invoice_id", null: false
@@ -346,7 +355,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_17_181639) do
     t.integer "role", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "organization_id"
+    t.string "position"
+    t.string "department"
+    t.string "phone"
+    t.text "address"
+    t.decimal "wage_per_hour", precision: 8, scale: 2
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["ref"], name: "index_users_on_ref", unique: true
   end
 
@@ -400,4 +416,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_17_181639) do
   add_foreign_key "team_costs", "projects"
   add_foreign_key "team_costs", "users"
   add_foreign_key "team_costs", "users", column: "created_by_id"
+  add_foreign_key "users", "organizations"
 end

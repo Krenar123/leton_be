@@ -1,5 +1,5 @@
 class Meeting < ApplicationRecord
-  belongs_to :project
+  belongs_to :project, optional: true
   belongs_to :organizer, class_name: 'User'
 
   has_many :meeting_participants

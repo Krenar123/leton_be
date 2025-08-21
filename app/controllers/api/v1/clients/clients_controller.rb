@@ -5,7 +5,7 @@ module Api
         include CreatedByAssignable
 
         def index
-          clients = Client.all
+          clients = Client.includes(:projects, :invoices).order(created_at: :desc)
           render json: ClientSerializer.new(clients)
         end
 
@@ -23,11 +23,20 @@ module Api
             render json: { errors: client.errors.full_messages }, status: :unprocessable_entity
           end
         end
+
+        def update
+          client = Client.find_by!(ref: params[:ref])
+          if client.update(client_params)
+            render json: ClientSerializer.new(client).serializable_hash
+          else
+            render json: { errors: client.errors.full_messages }, status: :unprocessable_entity
+          end
+        end
   
         private
   
         def client_params
-          params.require(:client).permit(:company, :contact_name, :phone, :email)
+          params.require(:client).permit(:company, :contact_name, :phone, :email, :address, :website, :industry, :status)
         end
       end
     end

@@ -1,8 +1,19 @@
+# app/serializers/meeting_serializer.rb
 class MeetingSerializer
   include JSONAPI::Serializer
-  attributes :ref, :title, :description, :meeting_date, :duration_minutes,
-             :location, :meeting_type, :status, :created_at, :updated_at
+  set_key_transform :camel_lower
 
-  belongs_to :project
-  belongs_to :organizer, serializer: UserSerializer 
+  attributes :ref, :title, :description, :meeting_date, :duration_minutes,
+             :location, :meeting_type, :status
+
+  attribute :participants do |obj|
+    obj.meeting_participants.includes(:user, :client, :supplier).map do |mp|
+      {
+        userName: mp.user&.full_name,
+        clientName: mp.client&.company,
+        supplierName: mp.supplier&.company,
+        response: mp.response
+      }.compact
+    end
+  end
 end

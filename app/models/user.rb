@@ -1,6 +1,8 @@
 class User < ApplicationRecord
   has_secure_password
 
+  belongs_to :organization, optional: false
+
   has_many :clients, foreign_key: :created_by_id
   has_many :suppliers, foreign_key: :created_by_id
   has_many :projects, foreign_key: :created_by_id
@@ -20,5 +22,5 @@ class User < ApplicationRecord
 
   
 
-  validates :email, presence: true, uniqueness: true
+  validates :email, presence: true, uniqueness: { scope: :organization_id }
 end
