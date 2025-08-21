@@ -82,12 +82,20 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  url: <%= ENV["DATABASE_URL"] %>
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
-  # Optional, but helps on Render:
-  prepared_statements: true
-  variables:
-    statement_timeout: 10000
+  primary: &primary
+    url: <%= ENV["DATABASE_URL"] %>
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+    prepared_statements: true
+    variables:
+      statement_timeout: 10000
+
+  # Solid* roles (all share the same DB for now)
+  queue:
+    <<: *primary
+  cache:
+    <<: *primary
+  cable:
+    <<: *primary
 
 #production:
 #  primary: &primary_production
