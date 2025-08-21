@@ -7,3 +7,24 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+
+org = Organization.create!(
+  name: "Leton Construction",
+  industry: "Construction",
+  address: "123 Main St, New York, NY",
+  website: "https://leton.com"
+)
+
+# Create an admin user for that organization
+admin = User.create!(
+  organization: org,
+  full_name: "John Smith",
+  email: "john@leton.com",
+  password: "password123",  # remember to change in production
+  role: :admin,
+  phone: "+1 234 567 8901",
+  address: "123 Main St, New York, NY 10001",
+  position: "Director",
+  department: "Management"
+)
