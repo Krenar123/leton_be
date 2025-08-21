@@ -82,20 +82,28 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  primary: &primary_production
-    <<: *default
-    database: leton_be_production
-    username: leton_be
-    password: <%= ENV["LETON_BE_DATABASE_PASSWORD"] %>
-  cache:
-    <<: *primary_production
-    database: leton_be_production_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    database: leton_be_production_queue
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    database: leton_be_production_cable
-    migrations_paths: db/cable_migrate
+  url: <%= ENV["DATABASE_URL"] %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+  # Optional, but helps on Render:
+  prepared_statements: true
+  variables:
+    statement_timeout: 10000
+
+#production:
+#  primary: &primary_production
+#    <<: *default
+#    database: leton_be_production
+#    username: leton_be
+#    password: <%= ENV["LETON_BE_DATABASE_PASSWORD"] %>
+#  cache:
+#    <<: *primary_production
+#    database: leton_be_production_cache
+#    migrations_paths: db/cache_migrate
+#  queue:
+#    <<: *primary_production
+#    database: leton_be_production_queue
+#    migrations_paths: db/queue_migrate
+#  cable:
+#    <<: *primary_production
+#    database: leton_be_production_cable
+#    migrations_paths: db/cable_migrate
