@@ -17,13 +17,12 @@ class ApplicationController < ActionController::API
     @current_user = ActiveRecord::Base.transaction do
       org = Organization.first_or_create!(
         name:    "Leton Construction",
-        industry:"Construction",
-        address: "123 Main St, New York, NY",
-        website: "https://leton.com"
+        ref: SecureRandom.hex(24)
       )
 
       # Use find_or_create_by! for idempotency (avoids duplicates on retries/races)
       User.find_or_create_by!(email: "john@leton.com") do |admin|
+        admin.ref = SecureRandom.hex(24)
         admin.organization = org
         admin.full_name    = "John Smith"
         admin.password     = "password123" # TODO: change in production!
