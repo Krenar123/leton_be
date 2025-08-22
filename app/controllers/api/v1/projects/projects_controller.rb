@@ -18,6 +18,7 @@ module Api
           project = Project.new(project_params)
           project.project_manager ||= current_user
           assign_created_by(project)# or replace with actual user id if not using auth yet
+          
           if project.save
             render json: ProjectSerializer.new(project), status: :created
           else
