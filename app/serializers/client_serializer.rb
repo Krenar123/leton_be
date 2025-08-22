@@ -3,11 +3,11 @@ class ClientSerializer
   include JSONAPI::Serializer
 
   set_type :client
-  set_id   :ref
+  #set_id   :ref
   set_key_transform :camel_lower
 
   # simple passthrough attributes (must exist on the model)
-  attributes :company, :contact_name, :email, :phone, :address, :website, :industry, :status
+  attributes :id, :ref, :company, :contact_name, :email, :phone, :address, :website, :industry, :status
 
   # derived attributes
   attribute :current_projects do |obj|
