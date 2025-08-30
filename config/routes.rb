@@ -24,6 +24,8 @@ Rails.application.routes.draw do
           resources :bills, controller: "project_bills", param: :ref, only: [:index, :create] do
             resources :payments, controller: "project_bill_payments", only: [:create]
           end
+
+          resources :team_costs, controller: 'project_team_costs', only: [:index, :create, :destroy]
         end
       end
 

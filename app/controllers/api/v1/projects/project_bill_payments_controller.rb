@@ -15,8 +15,8 @@ module Api
             # Optionally auto-advance bill status
             if @bill.outstanding <= 0
               @bill.update(status: :paid) # you could add paid_date if you add that column
-            elsif @bill.paid_total > 0 && @bill.sent?
-              @bill.update(status: :partial)
+            elsif @bill.paid_total > 0 && @bill.outstanding > 0
+              @bill.update(status: :partially_paid)
             end
 
             render json: pay.as_json, status: :created

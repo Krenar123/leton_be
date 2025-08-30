@@ -21,10 +21,6 @@ module Api
         end
 
         def index
-          puts
-          puts "woooow"
-          puts @organization.present?
-          puts @organization.users
           users = @organization.users
           render json: UserSerializer.new(users).serializable_hash
         end
