@@ -5,7 +5,5 @@ class Supplier < ApplicationRecord
 
   enum :status, { active: 0, inactive: 1 }
 
-  
-
-  validates :company, :contact_name, presence: true
+  validates :company, presence: true
 end

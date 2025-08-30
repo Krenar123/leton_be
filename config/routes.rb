@@ -3,21 +3,27 @@ Rails.application.routes.draw do
     namespace :v1 do
       scope module: :projects do
         resources :projects, param: :ref, only: [:index, :show, :create, :update] do
-          get :objectives, to: "project_objectives#index"
-          post :objectives, to: "project_objectives#create"
-          patch "objectives/:ref", to: "project_objectives#update"
-          delete "objectives/:ref", to: "project_objectives#destroy"
+          # --- Project objectives ---
+          resources :objectives, controller: "project_objectives", param: :ref do
+            resources :tasks, controller: "project_tasks", param: :ref
+          end
 
-          get "objectives/:ref/tasks", to: "project_tasks#index"
-          post "objectives/:ref/tasks", to: "project_tasks#create"
-          patch "objectives/:ref/tasks/:task_ref", to: "project_tasks#update"
-          delete "objectives/:ref/tasks/:task_ref", to: "project_tasks#destroy"
+          # --- Project item lines ---
+          resources :item_lines, controller: "project_item_lines", param: :ref do
+            post :complete, on: :member
+          end
 
-          get "item_lines", to: "project_item_lines#index"
-          post "item_lines", to: "project_item_lines#create"
-          patch "item_lines/:ref", to: "project_item_lines#update"
-          delete "item_lines/:ref", to: "project_item_lines#destroy"
-          post "item_lines/:ref/complete", to: "project_item_lines#complete"
+          # --- Project meetings ---
+          resources :meetings, controller: "project_meetings", param: :ref
+
+          # --- Project invoices & payments ---
+          resources :invoices, controller: "project_invoices", param: :ref, only: [:index, :create] do
+            resources :payments, controller: "project_invoice_payments", only: [:create]
+          end
+
+          resources :bills, controller: "project_bills", param: :ref, only: [:index, :create] do
+            resources :payments, controller: "project_bill_payments", only: [:create]
+          end
         end
       end
 

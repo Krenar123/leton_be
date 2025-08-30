@@ -22,9 +22,6 @@ module Api
             MeetingParticipant.create!(meeting: meeting, client: client, user: current_user)
             render json: MeetingSerializer.new(meeting).serializable_hash, status: :created
           else
-            puts
-            puts meeting.errors.full_messages
-            puts meeting.errors
             render json: { errors: meeting.errors.full_messages }, status: :unprocessable_entity
           end
         end

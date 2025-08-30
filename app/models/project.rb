@@ -11,7 +11,8 @@ class Project < ApplicationRecord
   has_many :documents
   has_many :folders
   has_many :calendar_events
-
+  has_many :bills
+  
   enum :status, { planning: 0, active: 1, on_hold: 2, completed: 3, cancelled: 4 }
 
   validates :name, presence: true

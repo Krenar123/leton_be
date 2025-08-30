@@ -3,6 +3,7 @@ class ItemLine < ApplicationRecord
   belongs_to :parent, class_name: 'ItemLine', optional: true
   belongs_to :depends_on, class_name: 'ItemLine', optional: true
   belongs_to :created_by, class_name: 'User'
+  belongs_to :supplier, optional: true
 
   enum :status, { not_started: 0, in_progress: 1, completed: 2, on_hold: 3 }
 
@@ -27,5 +28,11 @@ class ItemLine < ApplicationRecord
       sibling_count = project.item_lines.where(parent_id: parent_id).count
       self.cost_code = "#{parent.cost_code}.#{sibling_count + 1}"
     end
-  end    
+  end
+
+  def get_children_ids
+    project.item_lines
+       .where("cost_code LIKE ?", "#{cost_code}.%")
+       .pluck(:id)
+  end
 end

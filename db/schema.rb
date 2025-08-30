@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_21_211133) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_30_091926) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -30,6 +30,29 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_211133) do
     t.index ["created_by_id"], name: "index_backstops_on_created_by_id"
     t.index ["project_id"], name: "index_backstops_on_project_id"
     t.index ["ref"], name: "index_backstops_on_ref", unique: true
+  end
+
+  create_table "bills", force: :cascade do |t|
+    t.string "ref", null: false
+    t.bigint "project_id", null: false
+    t.bigint "supplier_id", null: false
+    t.bigint "item_line_id"
+    t.string "bill_number", null: false
+    t.decimal "amount"
+    t.decimal "tax_amount"
+    t.decimal "total_amount"
+    t.date "issue_date"
+    t.date "due_date"
+    t.integer "status", default: 0
+    t.date "payment_date"
+    t.bigint "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bill_number"], name: "index_bills_on_bill_number", unique: true
+    t.index ["item_line_id"], name: "index_bills_on_item_line_id"
+    t.index ["project_id"], name: "index_bills_on_project_id"
+    t.index ["ref"], name: "index_bills_on_ref", unique: true
+    t.index ["supplier_id"], name: "index_bills_on_supplier_id"
   end
 
   create_table "calendar_events", force: :cascade do |t|
@@ -119,9 +142,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_211133) do
     t.bigint "created_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "item_line_id"
     t.index ["client_id"], name: "index_invoices_on_client_id"
     t.index ["created_by_id"], name: "index_invoices_on_created_by_id"
     t.index ["invoice_number"], name: "index_invoices_on_invoice_number", unique: true
+    t.index ["item_line_id"], name: "index_invoices_on_item_line_id"
     t.index ["project_id"], name: "index_invoices_on_project_id"
     t.index ["ref"], name: "index_invoices_on_ref", unique: true
   end
@@ -149,11 +174,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_211133) do
     t.datetime "updated_at", null: false
     t.string "cost_code"
     t.string "parent_cost_code"
+    t.bigint "supplier_id"
     t.index ["created_by_id"], name: "index_item_lines_on_created_by_id"
     t.index ["depends_on_id"], name: "index_item_lines_on_depends_on_id"
     t.index ["parent_id"], name: "index_item_lines_on_parent_id"
     t.index ["project_id"], name: "index_item_lines_on_project_id"
     t.index ["ref"], name: "index_item_lines_on_ref", unique: true
+    t.index ["supplier_id"], name: "index_item_lines_on_supplier_id"
   end
 
   create_table "meeting_participants", force: :cascade do |t|
@@ -239,7 +266,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_211133) do
 
   create_table "payments", force: :cascade do |t|
     t.string "ref", null: false
-    t.bigint "invoice_id", null: false
+    t.bigint "invoice_id"
     t.decimal "amount"
     t.string "payment_method"
     t.date "payment_date"
@@ -248,8 +275,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_211133) do
     t.bigint "created_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "payable_type"
+    t.bigint "payable_id"
     t.index ["created_by_id"], name: "index_payments_on_created_by_id"
     t.index ["invoice_id"], name: "index_payments_on_invoice_id"
+    t.index ["payable_type", "payable_id"], name: "index_payments_on_payable_type_and_payable_id"
     t.index ["ref"], name: "index_payments_on_ref", unique: true
   end
 
@@ -369,6 +399,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_211133) do
   add_foreign_key "backstops", "projects"
   add_foreign_key "backstops", "users", column: "assigned_to_id"
   add_foreign_key "backstops", "users", column: "created_by_id"
+  add_foreign_key "bills", "item_lines"
+  add_foreign_key "bills", "projects"
+  add_foreign_key "bills", "suppliers"
+  add_foreign_key "bills", "users", column: "created_by_id"
   add_foreign_key "calendar_events", "meetings"
   add_foreign_key "calendar_events", "projects"
   add_foreign_key "calendar_events", "users", column: "created_by_id"
@@ -382,11 +416,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_211133) do
   add_foreign_key "folders", "projects"
   add_foreign_key "folders", "users", column: "created_by_id"
   add_foreign_key "invoices", "clients"
+  add_foreign_key "invoices", "item_lines"
   add_foreign_key "invoices", "projects"
   add_foreign_key "invoices", "users", column: "created_by_id"
   add_foreign_key "item_lines", "item_lines", column: "depends_on_id"
   add_foreign_key "item_lines", "item_lines", column: "parent_id"
   add_foreign_key "item_lines", "projects"
+  add_foreign_key "item_lines", "suppliers"
   add_foreign_key "item_lines", "users", column: "created_by_id"
   add_foreign_key "meeting_participants", "clients"
   add_foreign_key "meeting_participants", "meetings"
