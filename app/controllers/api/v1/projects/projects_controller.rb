@@ -5,7 +5,7 @@ module Api
         include CreatedByAssignable
 
         def index
-          projects = Project.order(created_at: :desc).includes(:client)
+          projects = Project.order(created_at: :desc).includes(:client, invoices: :payments, bills: :payments)
           render json: ProjectSerializer.new(projects)
         end
 

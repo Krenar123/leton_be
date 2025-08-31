@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_30_091926) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_31_202650) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -30,6 +30,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_30_091926) do
     t.index ["created_by_id"], name: "index_backstops_on_created_by_id"
     t.index ["project_id"], name: "index_backstops_on_project_id"
     t.index ["ref"], name: "index_backstops_on_ref", unique: true
+  end
+
+  create_table "bill_lines", force: :cascade do |t|
+    t.bigint "bill_id", null: false
+    t.bigint "item_line_id", null: false
+    t.decimal "amount", default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bill_id"], name: "index_bill_lines_on_bill_id"
+    t.index ["item_line_id"], name: "index_bill_lines_on_item_line_id"
   end
 
   create_table "bills", force: :cascade do |t|
@@ -125,6 +135,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_30_091926) do
     t.index ["parent_id"], name: "index_folders_on_parent_id"
     t.index ["project_id"], name: "index_folders_on_project_id"
     t.index ["ref"], name: "index_folders_on_ref", unique: true
+  end
+
+  create_table "invoice_lines", force: :cascade do |t|
+    t.bigint "invoice_id", null: false
+    t.bigint "item_line_id", null: false
+    t.decimal "amount", default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invoice_id"], name: "index_invoice_lines_on_invoice_id"
+    t.index ["item_line_id"], name: "index_invoice_lines_on_item_line_id"
   end
 
   create_table "invoices", force: :cascade do |t|
@@ -399,6 +419,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_30_091926) do
   add_foreign_key "backstops", "projects"
   add_foreign_key "backstops", "users", column: "assigned_to_id"
   add_foreign_key "backstops", "users", column: "created_by_id"
+  add_foreign_key "bill_lines", "bills"
+  add_foreign_key "bill_lines", "item_lines"
   add_foreign_key "bills", "item_lines"
   add_foreign_key "bills", "projects"
   add_foreign_key "bills", "suppliers"
@@ -415,6 +437,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_30_091926) do
   add_foreign_key "folders", "folders", column: "parent_id"
   add_foreign_key "folders", "projects"
   add_foreign_key "folders", "users", column: "created_by_id"
+  add_foreign_key "invoice_lines", "invoices"
+  add_foreign_key "invoice_lines", "item_lines"
   add_foreign_key "invoices", "clients"
   add_foreign_key "invoices", "item_lines"
   add_foreign_key "invoices", "projects"

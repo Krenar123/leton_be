@@ -2,7 +2,9 @@ class Bill < ApplicationRecord
   belongs_to :project
   belongs_to :supplier
   belongs_to :created_by, class_name: 'User', optional: true
-  belongs_to :item_line, optional: true
+  #belongs_to :item_line, optional: true
+  has_many :bill_lines, dependent: :destroy
+  has_many :item_lines, through: :bill_lines
 
   has_many :payments, as: :payable, dependent: :destroy
 
@@ -12,7 +14,11 @@ class Bill < ApplicationRecord
     payments.sum(:amount).to_d
   end
 
+  def lines_total
+    bill_lines.sum(:amount)
+  end
+
   def outstanding
-    (total_amount.presence || amount.presence || 0).to_d - paid_total
+    (total_amount.presence || amount.presence || lines_total || 0).to_d - paid_total
   end
 end

@@ -3,7 +3,9 @@ class Invoice < ApplicationRecord
   belongs_to :project
   belongs_to :client
   belongs_to :created_by, class_name: 'User', optional: true
-  belongs_to :item_line, class_name: 'ItemLine', optional: true
+  #belongs_to :item_line, class_name: 'ItemLine', optional: true
+  has_many :invoice_lines, dependent: :destroy
+  has_many :item_lines, through: :invoice_lines
 
   has_many :payments, as: :payable, dependent: :destroy
 
@@ -16,7 +18,12 @@ class Invoice < ApplicationRecord
     payments.sum(:amount)
   end
 
+  def lines_total
+    invoice_lines.sum(:amount)
+  end
+
+  # If you plan to keep header totals, you can keep this as-is
   def outstanding
-    (total_amount || amount || 0) - paid_total
+    (total_amount || amount || lines_total || 0) - paid_total
   end
 end
